@@ -1,6 +1,5 @@
 const {productService} = require("../services/index")
 const {ProductModel} = require("../dao/mongo/models/product.models")
-const { format } = require("morgan")
 const mockingService = require("../utils/Faker")
 const { CustomError } = require("../utils/CustomError/CustomError")
 const { ModificationProductError, AddProductError } = require("../utils/CustomError/info")
@@ -12,29 +11,54 @@ class ProductController {
     mockingProducts = async (req, res) => {
             try {
                 const products = mockingService.generateMockProducts();
-                console.log(products);
-                res.status(200).send({ status: 'success', payload: products });
+                if(!products){
+                    req.logger.error("Error al obtener productos")
+                    res.status(400).send({
+                        status: "Error",
+                        message: "Error al obtener productos"
+                    })
+                    return
+                }
+                req.logger.info("productos obtenidos correctamente")
+                res.status(200).send({
+                    status: 'success', 
+                    payload: products
+                });
             } catch (error) {
-                req.logger.http('Error al encontrar los productos en la base de datos', error);
                 req.logger.error('Error al encontrar los productos en la base de datos', error);
             }
         }
     getProductsJson = async (req,res) => {
         try {
             let products = await productService.getProducts()
+            if(!products){
+                req.logger.error("Error al obtener productos")
+                res.status(400).send({
+                    status: "Error",
+                    message: "Error al obtener productos"
+                })
+                return
+            }
+            req.logger.info("Productos obtenidos correctamente")
             res.status(200).send({
                 status: 'success',
                 payload: products
             })
         } catch (error) {
-            req.logger.http('Error al encontrar los productos', error);
-            req.logger.warn("Error al encontrar los productos", error);
+            req.logger.error("Error al encontrar los productos", error);
         }
     }
     getProducts = async (req, res) => {
         try {
             const { first_name, role, username, _id, cart} = req.user
-            console.log("USER ROLE", role)
+            if(!req.user){
+                req.logger.error("Error al obtener el usuario")
+                res.status(400).send({
+                    status: "Error",
+                    message: "Debes ingresar para obtener estos datos"
+                })
+                return
+            }
             let isAdmin = false
             if(role === "admin"){
                 isAdmin = true
@@ -44,9 +68,18 @@ class ProductController {
                 {},
                 { limit: 3, page: page, lean: true }
             )
-            const { docs, hasPrevPage, hasNextPage, prevPage, nextPage } = products
+            if(!products){
+                req.logger.error("Error al obtener productos")
+                res.status(400).send({
+                    status: "Error",
+                    message: "Error al obtener productos"
+                })
+                return
+            }
 
-            console.log("USER IDDDD:::", _id)
+            const { docs, hasPrevPage, hasNextPage, prevPage, nextPage } = products
+            
+            req.logger.info("Productos obtenidos correctamente")
             res.render('productView', {
                 status: 'success',
                 userId: _id,
@@ -69,8 +102,16 @@ class ProductController {
     getProduct = async (req,res)=>{
         try {
             const {pid} = req.params
-            //console.log(pid)
             let product = await productService.getProduct(pid)
+            if(!product){
+                req.logger.error("Error al obtener productos")
+                res.status(400).send({
+                    status: "Error",
+                    message: "Error al obtener productos"
+                })
+                return
+            }
+            req.logger.info("producto obtenido correctamente")
             res.status(200).send({
                 status: 'success',
                 payload: product

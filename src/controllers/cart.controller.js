@@ -10,7 +10,6 @@ class CartController {
             //const { uid } = req.params
             const { cart, first_name, last_name} = req.user
             const cartUser = await cartService.getById(cart)
-                console.log("Cart user:::::",cartUser)
             if(!req.user){
                 req.logger.error("No se encontró el usuario")
                 res.status(404).send({
@@ -36,8 +35,6 @@ class CartController {
 
             const totalCompra = productsCart.reduce((total, product) => total + product.total, 0);
 
-
-            console.log("PRODUCTS CART:::::::",productsCart)
             res.status(200).render("userCart", {
                 name: first_name+" "+last_name,
                 products: productsCart,
@@ -63,13 +60,20 @@ class CartController {
         const {cid} = req.params
         try {
             const cart = await cartService.getById(cid)
+
             if (!cart){
-                return res.status(400).send({status:'error',mensaje:"Carrito no encontrado"})
+                res.status(400).send({
+                    status:'error',
+                    mensaje:"Carrito no encontrado"
+                });
+                return
             }
-            console.log(cart)
-            res.status(200).send({status:'ok', payload: cart})
+            req.logger.info("Carrito encontrado correctamente: ", cart)
+            res.status(200).send({
+                status:'Success',
+                payload: cart})
+
         } catch (error) {
-            req.logger.http('Error al encontrar el carrito', error);
             req.logger.error('Error al encontrar el carrito', error);
         }
     }
@@ -157,7 +161,7 @@ class CartController {
     addProductArray = async (req, res)=>{
         const {cid} = req.params
         const {products} = req.body
-        console.log(products)
+
         let allProductsOk= true
 
         for (const item of products) {
@@ -166,10 +170,15 @@ class CartController {
                 break
             }
         }
-        if (!allProductsOk) return res.status(400).send({status:'error',message:'El producto indicado no existe'})
-        // All the products ids are valid 
-        try {
+        if (!allProductsOk){
+            res.status(400).send({
+                status:'error',
+                message:'El producto indicado no existe'
+            });
+            return
+        }
 
+        try {
             const response = await cartService.modifyProducts(cid, products) 
             if (response.status==="error"){
                 return res.status(400).send(response)
@@ -177,7 +186,7 @@ class CartController {
                 return res.status(200).send(response)
             }       
         } catch (error) {
-            console.log(error)
+            req.logger.error(error)
         }
     }
     async  productValid(pid) {
@@ -195,7 +204,6 @@ class CartController {
                 return res.status(200).send(response)
             }       
         } catch (error) {
-            req.logger.http('Error al borrar el producto del carrito', error);
             req.logger.error('Error al borrar el producto del carrito', error);
         }
     }
@@ -288,7 +296,7 @@ class CartController {
                         const productName = product.product.title;
                         const productOwnerEmail = product.product.owner.email;
                         const productOwnerName = product.product.owner.username;
-                        console.log("COMPRADOR: ",newTicket.pucharser)
+
                         sendEmailOwner(productOwnerEmail, productOwnerName, productName, newTicket.purchaser);
                     };
                     sendEmailTicket(user.username, newTicket._id, productsDisponibles)
@@ -321,7 +329,6 @@ class CartController {
                         const productName = product.product.title;
                         const productOwnerEmail = product.product.owner.email;
                         const productOwnerName = product.product.owner.username;
-                        console.log("COMPRADOR: ",newTicket.pucharser)
                         sendEmailOwner(productOwnerEmail, productOwnerName, productName, newTicket.purchaser);
                     };
                     sendEmailTicket(user.username, newTicket._id, productsDisponibles)
