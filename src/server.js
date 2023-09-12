@@ -34,7 +34,7 @@ const swaggerjsDoc = require("swagger-jsdoc")
 const app = express()
 const serverHttp = ServerHTTP(app)
 //const io = ServerIO(serverHttp)
-const PORT = envConfig.PORT
+const PORT = envConfig.PORT | 8080
 
 connectDB()
 //CONFIG:
