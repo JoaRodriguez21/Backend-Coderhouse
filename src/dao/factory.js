@@ -1,5 +1,4 @@
 const { envConfig } = require("../config/config");
-const config = require("../config/configServer");
 
 let CartDao
 let UserDao
