@@ -10,6 +10,9 @@
     "testproducts": "mocha test/Product.test.js",
     "testcarts": "mocha test/Cart.test.js"
   },
+  "engines": {
+    "node": "18"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
