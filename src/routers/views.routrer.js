@@ -4,7 +4,7 @@ const passport = require("passport")
 
 const routerViews = Router()
 
-routerViews.get("/login", (req, res) =>{
+routerViews.get("/", (req, res) =>{
     res.render("loginView", {
         style: "index.css"
     })
