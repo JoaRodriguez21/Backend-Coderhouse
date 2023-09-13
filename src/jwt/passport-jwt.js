@@ -84,7 +84,6 @@ const initPassportGitHub = () => {
                 callbackURL: envConfig.GITHUB_CLIENT_SECRET, //URL de github
             },
             async (accessToken, refreshToke, profile, done) => {
-                console.log("Profile", profile)
                 try {
                     let user = await UserModel.findOne({
                         email: profile._json.email,
@@ -103,7 +102,6 @@ const initPassportGitHub = () => {
                     return done(null, user)
                 } 
                 catch (error) {
-                    console.log(error)
                     return done(null, false)
                 }
             }
@@ -123,8 +121,6 @@ const initPassportGitHub = () => {
 //validar los roles de los usuarios
 const authorization = (role) => {
     return async (req, res, next) =>{
-        console.log("role", role)
-        console.log("userrole: ", req.user)
         if (!req.user)
             return res.status(401).send({ status: "error", error: "error" })
         if (req.user.role !== role)
@@ -135,7 +131,6 @@ const authorization = (role) => {
 
 const authUserandAdmin = () => {
     return async (req, res, next) =>{
-        console.log(req.user)
         if (!req.user)
             req.logger.error("Inicia sessión para realizar esta acción")
         if (!req.user.role === 'admin' || !req.user.role === 'user' || !req.user.role === "premium") {

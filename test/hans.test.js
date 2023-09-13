@@ -1,5 +1,4 @@
 const mongoose = require("mongoose")
-const User = require("../src/dao/Users.dao")
 const chai =  require("chai")
 const { createHash, passwordValidation } = require("../src/utils")
 
@@ -10,7 +9,6 @@ describe("Testing de Bcypt", ()=>{
     it("El servicio debe devolver un hasheo efectivo del password", async ()=>{
         const password = "pass123456"
         const hashedPass = await createHash(password)
-        console.log(hashedPass)
         expect(hashedPass).to.not.equal(password)
     })
     it("El servicio debe comparar de manera efectiva el password con el hash", async ()=>{

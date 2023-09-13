@@ -22,7 +22,6 @@ class CartManager {
         return this.carts
     }
 
-
     writeFile = async ()=>{
         const data= { index : this.cartCount, cartsList : this.carts }
         try {
@@ -91,6 +90,5 @@ class CartManager {
     }
         
 }
-
 
 module.exports = CartManager

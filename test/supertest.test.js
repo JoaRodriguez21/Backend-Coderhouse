@@ -13,14 +13,11 @@ describe('Testing de adoptame', ()=>{
                 birthDate: '10-10-2022'
             }
             const {statusCode, _body, ok} = await requester.post('/api/pets').send(petMock)
-            // console.log(statusCode)
-            // console.log(_body)
-            // console.log(ok)
+
             expect(_body.payload).to.have.property('_id')
         })
         it('El endpoint de GET /api/pets debe traer todas las mascotas correctamente', async ()=>{
             const {statusCode, _body, ok} = await requester.get('/api/pets')
-            // console.log(_body.payload)
             expect(ok).to.be.equal(true)
             expect(statusCode).to.be.equal(200)
         })
@@ -43,7 +40,6 @@ describe('Testing de adoptame', ()=>{
                 password: '123456'
             }
             const {_body} = await requester.post('/api/sessions/register').send(userMock)
-            console.log(_body)
             expect(_body.payload).to.be.ok
         })
         it('El servicio debe loguear un usuario correctamente y devolver una cookie', async ()=>{
@@ -54,7 +50,6 @@ describe('Testing de adoptame', ()=>{
 
             const result = await requester.post('/api/sessions/login').send(userMock)
             const cookieResult = result.headers['set-cookie'][0]
-            // console.log(cookieResult)
             expect(cookieResult).to.be.ok
             // seteado en cookie el jwt
             cookie = {
@@ -67,7 +62,6 @@ describe('Testing de adoptame', ()=>{
         })
         it('Debe enviar el jwt del usuario y consultar la ruta current', async ()=>{
             const {_body} = await requester.get('/api/sessions/current').set('Cookie', [`${cookie.name}=${cookie.value}`])
-            // console.log(_body)
             expect(_body.payload.email).to.be.equal('f@gmail.com')
         })
     })

@@ -30,7 +30,8 @@ routerViews.get("/reset-password", (req, res) => {
 routerViews.get("/create-product", (req, res) => {
     res.render("createProd")
 })
-routerViews.get("/api/users/profil", passport.authenticate('jwt', { session: false }), (req, res) =>{
+routerViews.get("/api/users/profil",
+passport.authenticate('jwt', { session: false }), (req, res) =>{
     res.render("myProfile", {
         style: "index.css"
     })

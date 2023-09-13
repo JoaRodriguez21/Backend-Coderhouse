@@ -98,7 +98,7 @@ const initPassport = () => {
                 await newCart.save();
                     return done(null, user)
                 } catch (error) {
-                    console.log(error)
+                    req.logger.error(error)
                 }
     }))
 

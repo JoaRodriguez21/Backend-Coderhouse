@@ -34,9 +34,12 @@ class AdminController {
     }
     changeRole = async (req, res) =>{
         try {
+
             const {uid} = req.params
             const { role } = req.body
+
             const user = await userService.getUser(uid)
+
             if(!user){
                 req.logger.error("No se encontro el usuario")
                 res.status(404).send({
@@ -45,9 +48,11 @@ class AdminController {
                 });
                 return
             }
+
             const userRole = user[0].role
+
             const userUpdate = await userService.updateRole(uid, role);
-            console.log("compare:", userUpdate, userRole)
+
             if(userUpdate === userRole){
                 req.logger.info("No se actualizó el rol del usuario")
                 res.status(200).send({
@@ -56,11 +61,14 @@ class AdminController {
                 })
                 return
             }
+
             req.logger.info("Rol actualizado correctamente")
             res.status(200).redirect("/api/users/admin")
+
         } catch (error) {
             req.logger.error("Error al cambiar de rol", error)
         }
+        
     }
     deleteUser = async (req, res) => {
         try {

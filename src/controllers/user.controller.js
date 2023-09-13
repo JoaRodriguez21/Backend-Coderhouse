@@ -15,7 +15,6 @@ class UserController {
                 return
             }
             for (const user of users) {
-                console.log("user: ",user)
                 let userFilter = new UserDto(user)
                 usersDTO.push(userFilter)
             };
@@ -165,7 +164,6 @@ class UserController {
             });
 
         } catch (error) {
-            console.log(error)
             req.logger.error('Error al cargar el perfil', error);
         }
     }
@@ -282,23 +280,18 @@ class UserController {
 
     expiratedAccount = async (req, res) => {
         try {
-            const expirationDate = new Date(Date.now() - 5 * 60 * 1000);
-            console.log("fecha de expiración", expirationDate)
+            const expirationDate = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
             const inactiveUsers = await userService.lastLogin(expirationDate);
-            console.log("Usuarios inactivos", inactiveUsers)
             if(!inactiveUsers){
                 req.logger.info("No se encontraron usuarios inactivos")
                 res.status(200).send({
                     status: "success",
                     message: "No se encontraron usuarios inactivos"
-                })
+                });
                 return
-            }
+            };
             for (const user of inactiveUsers) {
-                console.log("user: ",user)
-                // Envía correo indicando que la cuenta ha sido eliminada por inactividad
                 await sendEmailExpirateAccount(user.username, 'Cuenta eliminada por inactividad', user.first_name, user.last_connection);
-                // Elimina al usuario
                 await userService.deleteUser(user._id);
             };
 

@@ -1,40 +1,61 @@
-const {productService} = require("../services/index")
+const { productService } = require("../services/index")
 const {ProductModel} = require("../dao/mongo/models/product.models")
-const { format } = require("morgan")
 const mockingService = require("../utils/Faker")
-const { CustomError } = require("../utils/CustomError/CustomError")
-const { ModificationProductError, AddProductError } = require("../utils/CustomError/info")
-const { sendMail, sendEmail, sendEmailDeleteProduct, sendEmailCreateProduct } = require("../utils/sendmail")
-const { EError } = require("../utils/CustomError/EErrors")
+const { sendEmailDeleteProduct, sendEmailCreateProduct } = require("../utils/sendmail")
+
 
 class ProductController {
-
     mockingProducts = async (req, res) => {
             try {
                 const products = mockingService.generateMockProducts();
-                console.log(products);
-                res.status(200).send({ status: 'success', payload: products });
+                if(!products){
+                    req.logger.error("Error al obtener productos")
+                    res.status(400).send({
+                        status: "Error",
+                        message: "Error al obtener productos"
+                    })
+                    return
+                }
+                req.logger.info("productos obtenidos correctamente")
+                res.status(200).send({
+                    status: 'success', 
+                    payload: products
+                });
             } catch (error) {
-                req.logger.http('Error al encontrar los productos en la base de datos', error);
                 req.logger.error('Error al encontrar los productos en la base de datos', error);
             }
         }
     getProductsJson = async (req,res) => {
         try {
             let products = await productService.getProducts()
+            if(!products){
+                req.logger.error("Error al obtener productos")
+                res.status(400).send({
+                    status: "Error",
+                    message: "Error al obtener productos"
+                })
+                return
+            }
+            req.logger.info("Productos obtenidos correctamente")
             res.status(200).send({
                 status: 'success',
                 payload: products
             })
         } catch (error) {
-            req.logger.http('Error al encontrar los productos', error);
-            req.logger.warn("Error al encontrar los productos", error);
+            req.logger.error("Error al encontrar los productos", error);
         }
     }
     getProducts = async (req, res) => {
         try {
             const { first_name, role, username, _id, cart} = req.user
-            console.log("USER ROLE", role)
+            if(!req.user){
+                req.logger.error("Error al obtener el usuario")
+                res.status(400).send({
+                    status: "Error",
+                    message: "Debes ingresar para obtener estos datos"
+                })
+                return
+            }
             let isAdmin = false
             if(role === "admin"){
                 isAdmin = true
@@ -44,9 +65,18 @@ class ProductController {
                 {},
                 { limit: 3, page: page, lean: true }
             )
-            const { docs, hasPrevPage, hasNextPage, prevPage, nextPage } = products
+            if(!products){
+                req.logger.error("Error al obtener productos")
+                res.status(400).send({
+                    status: "Error",
+                    message: "Error al obtener productos"
+                })
+                return
+            }
 
-            console.log("USER IDDDD:::", _id)
+            const { docs, hasPrevPage, hasNextPage, prevPage, nextPage } = products
+            
+            req.logger.info("Productos obtenidos correctamente")
             res.render('productView', {
                 status: 'success',
                 userId: _id,
@@ -69,8 +99,16 @@ class ProductController {
     getProduct = async (req,res)=>{
         try {
             const {pid} = req.params
-            //console.log(pid)
             let product = await productService.getProduct(pid)
+            if(!product){
+                req.logger.error("Error al obtener productos")
+                res.status(400).send({
+                    status: "Error",
+                    message: "Error al obtener productos"
+                })
+                return
+            }
+            req.logger.info("producto obtenido correctamente")
             res.status(200).send({
                 status: 'success',
                 payload: product
@@ -125,7 +163,6 @@ class ProductController {
             }
 
             const newProduct = await productService.createProduct(product)
-            console.log("NUEVO PRODUCTO: ", newProduct)
             if(!newProduct){
                 req.logger.error("Error al crear el producto")
                 res.status(400).send({
@@ -135,7 +172,6 @@ class ProductController {
                 return
             }
 
-            console.log("PRODUCTO CREADO; ", newProduct.title, " DE ", newProduct.owner.username)
             sendEmailCreateProduct(req.user.username, newProduct.title, newProduct.owner.username)
 
             req.logger.info("Producto creado correctamente", newProduct)
@@ -203,7 +239,6 @@ deleteProduct = async (req, res) => {
         const user = req.user;
         let { pid } = req.params;
         const product = await productService.getProduct(pid)
-        console.log("Producto a eliminar: ", product, ", Creado por: ",product.owner.username)
         if(product.owner.username === user.username || user.role === "admin"){
             if(user.role !== "premium" || user.role !== "admin"){
                 req.logger.error("No tienes los permisos necesarios para realizar esta acción")
@@ -245,8 +280,7 @@ deleteProductHandlebars = async (req, res) => {
         const user = req.user;
         let { pid } = req.params;
         const product = await productService.getProduct(pid)
-        console.log("Producto a eliminar: ", product, ", Creado por: ",product.owner.username, " o ", product.owner)
-        
+
         if(product.owner.username === user.username || product.owner === "admin" || user.role === "admin"){
             if(!product){
                 req.logger.error("El producto no existe")
@@ -256,8 +290,8 @@ deleteProductHandlebars = async (req, res) => {
                 });
                 return
             };
-            /* sendEmailDeleteProduct(product.owner.username, "Producto Eliminado", product.owner.first_name, product.title, user.username) */
             await productService.deleteProduct(pid)
+            sendEmailDeleteProduct(product.owner.username, "Producto Eliminado", product.owner.first_name, product.title, user.username)
             req.logger.info("Producto eliminado correctamente")
             res.status(200).redirect("/api/product/products");
         } else{
