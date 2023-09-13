@@ -44,18 +44,18 @@ class CartDaoMongo {
     async addProduct(cid, pid, quantity) {
         try {
             let cart = await CartModel.findOne({_id: cid})
-            console.log(cart)
-            if (!cart) return {status: "Error", message: "Carrito no encontrado"}
-
             const productIndex = cart.products.findIndex(prod =>prod.product._id.toString()===pid)
-
             if (productIndex === -1) {
                 cart.products.push({product: pid, quantity})
+
             } else {
+
                 cart.products[productIndex].quantity += quantity
+
             }
+
             await cart.save()
-            return {status: "succes", message: "Producto agregado correctamente", productsQty:cart.products.length}
+            return cart
             
         } catch (error) {
             return new Error(error)

@@ -19,7 +19,7 @@ routerIndex
     .use("/api/cart", cartRouter)
     .use("/", routerViews)
     .use("/api", routerMail)
-    .use("/", routerPrueba)
+    .use("/prueba", routerPrueba)
     .post("/upload", uploader.single("myFile"), (req, res) =>{
     res.send({
         status: "success",

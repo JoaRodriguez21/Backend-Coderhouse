@@ -13,9 +13,3 @@ exports.sendSms = (nombre, apellido) => cliente.messages
         from: twilio_phone_number,
         to: envConfig.MY_PHONE_NUMBER
     })
-/* exports.sendWhatsapp = (nombre, apellido) => cliente.messages.create({
-    body: `Gracias por tu compra ${nombre} ${apellido}`,
-    from: `whatsapp:+14847499277`,
-    to: `whatsapp:${envConfig.MY_PHONE_NUMBER}`
-})
- */

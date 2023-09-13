@@ -2,7 +2,6 @@
 
 //factory
 const { UserDao, ProductDao, CartDao, TicketDao } = require("../dao/factory");
-
 //Repository
 const ProductRepository = require("../repositories/product.repository");
 const UserRepository = require("../repositories/user.repository");

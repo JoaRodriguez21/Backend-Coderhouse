@@ -18,7 +18,6 @@ describe("Testing de session", ()=>{
         };
     
         const response = await requester.post('/api/session/register').send(userMock);
-        console.log(response.body);
         expect(response.body).to.be.ok;
     });
     it('El servicio debe loguear un usuario correctamente y devolver la cookie', async ()=>{
@@ -29,7 +28,6 @@ describe("Testing de session", ()=>{
 
         const result = await requester.post('/api/session/login').send(userMock)
         const cookieResult = result.headers['set-cookie'][0]
-        console.log("Test login, Cookie: ---",cookieResult)
         expect(cookieResult).to.be.ok
         cookie = {
             name: cookieResult.split('=')[0],
@@ -41,9 +39,8 @@ describe("Testing de session", ()=>{
     })
     it("Test ruta current", async ()=>{
         const {_body} = await requester.get("/api/session/current").set("Cookie", [`${cookie.name}=${cookie.value}`])
-        console.log("El body del current devuelve: ---",_body)
         expect(_body.payload.username).to.be.equal('joaTest3@gmail.com')
-    }) 
+    })
     it('Test logout user', async () => {
 
         const response = await requester.get('/api/session/logout').set('Cookie', [`${cookie.name}=${cookie.value}`]);
@@ -59,7 +56,6 @@ describe("Testing de session", ()=>{
         let email = "joaTest3@gmail.com";
         
         const response = await requester.post("/api/session/reset-password").send({ email });
-        console.log("El body del current devuelve: ---", response.body);
         expect(response.body.status).to.equal('success');
         expect(response.body.message).to.equal(`Se envio el correo de recuperacion a: ${email}`);
     });

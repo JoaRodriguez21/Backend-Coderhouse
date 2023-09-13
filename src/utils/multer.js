@@ -14,9 +14,6 @@ const storage = multer.diskStorage({
         const { uid } = req.params
         const userId = uid
 
-        console.log("folderID:-----", userId)
-        console.log("nombre del archivo", file.fieldname)
-
         if (file.fieldname === 'profileImage') {
             userPath = path.join(profileImagePath, "user_" + userId);
         } else if (file.fieldname === 'productImage') {
@@ -31,7 +28,6 @@ const storage = multer.diskStorage({
             cb(new Error('Tipo de archivo no válido'));
         }        
         try {
-            console.log(userPath)
             fs.mkdir(userPath, (error) => {
                 if (error) {
                     return req.logger.error("Error al crear la carpeta en la dirección:", userPath, error);
@@ -46,7 +42,6 @@ const storage = multer.diskStorage({
 
     filename: (req, file, callback)=>{
         const nameAndExtension = `${Date.now()}-${file.fieldname}${path.extname(file.originalname)}`
-        console.log("file", nameAndExtension)
         callback(null, nameAndExtension)
     }
 })

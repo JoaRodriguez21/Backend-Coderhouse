@@ -1,13 +1,10 @@
-const {productService} = require("../services/index")
+const { productService } = require("../services/index")
 const {ProductModel} = require("../dao/mongo/models/product.models")
 const mockingService = require("../utils/Faker")
-const { CustomError } = require("../utils/CustomError/CustomError")
-const { ModificationProductError, AddProductError } = require("../utils/CustomError/info")
-const { sendMail, sendEmail, sendEmailDeleteProduct, sendEmailCreateProduct } = require("../utils/sendmail")
-const { EError } = require("../utils/CustomError/EErrors")
+const { sendEmailDeleteProduct, sendEmailCreateProduct } = require("../utils/sendmail")
+
 
 class ProductController {
-
     mockingProducts = async (req, res) => {
             try {
                 const products = mockingService.generateMockProducts();
@@ -166,7 +163,6 @@ class ProductController {
             }
 
             const newProduct = await productService.createProduct(product)
-            console.log("NUEVO PRODUCTO: ", newProduct)
             if(!newProduct){
                 req.logger.error("Error al crear el producto")
                 res.status(400).send({
@@ -176,7 +172,6 @@ class ProductController {
                 return
             }
 
-            console.log("PRODUCTO CREADO; ", newProduct.title, " DE ", newProduct.owner.username)
             sendEmailCreateProduct(req.user.username, newProduct.title, newProduct.owner.username)
 
             req.logger.info("Producto creado correctamente", newProduct)
@@ -244,7 +239,6 @@ deleteProduct = async (req, res) => {
         const user = req.user;
         let { pid } = req.params;
         const product = await productService.getProduct(pid)
-        console.log("Producto a eliminar: ", product, ", Creado por: ",product.owner.username)
         if(product.owner.username === user.username || user.role === "admin"){
             if(user.role !== "premium" || user.role !== "admin"){
                 req.logger.error("No tienes los permisos necesarios para realizar esta acción")
@@ -286,8 +280,7 @@ deleteProductHandlebars = async (req, res) => {
         const user = req.user;
         let { pid } = req.params;
         const product = await productService.getProduct(pid)
-        console.log("Producto a eliminar: ", product, ", Creado por: ",product.owner.username, " o ", product.owner)
-        
+
         if(product.owner.username === user.username || product.owner === "admin" || user.role === "admin"){
             if(!product){
                 req.logger.error("El producto no existe")
@@ -297,8 +290,8 @@ deleteProductHandlebars = async (req, res) => {
                 });
                 return
             };
-            /* sendEmailDeleteProduct(product.owner.username, "Producto Eliminado", product.owner.first_name, product.title, user.username) */
             await productService.deleteProduct(pid)
+            sendEmailDeleteProduct(product.owner.username, "Producto Eliminado", product.owner.first_name, product.title, user.username)
             req.logger.info("Producto eliminado correctamente")
             res.status(200).redirect("/api/product/products");
         } else{

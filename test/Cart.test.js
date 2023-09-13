@@ -29,7 +29,6 @@ describe("Testing de Carts", ()=>{
         const {statusCode, _body, ok} = await requester.get("/api/product").set("Cookie", [`${cookie.name}=${cookie.value}`])
         expect(statusCode).to.be.equal(200);
         expect(ok).to.be.equal(true)
-        console.log(_body)
         expect(_body).to.have.property('payload').that.is.an('array');
     });
     it('El endpoint GET /api/cart/:cid debe devolver un carrito por su id', async function () {
@@ -37,7 +36,6 @@ describe("Testing de Carts", ()=>{
         const {statusCode, _body, ok} = await requester.get(`/api/cart/${cid}`).set("Cookie", [`${cookie.name}=${cookie.value}`])
         expect(statusCode).to.be.equal(200);
         expect(ok).to.be.equal(true)
-        console.log(_body)
         expect(_body).to.be.an('object');
     });
     it('El endpoint POST /api/cart/:uid debe crear un carrito para el usuario', async () => {
@@ -61,7 +59,6 @@ describe("Testing de Carts", ()=>{
         const {statusCode, _body, ok} = await requester.delete(`/api/cart/${cid}/product/${pid}`).set("Cookie", [`${cookie.name}=${cookie.value}`])
         expect(statusCode).to.be.equal(200);
         expect(ok).to.be.equal(true)
-        console.log(_body)
         expect(_body).to.be.an('object');;
       });
       it('El endpoint DELETE /api/cart/:cid debe eliminar un carrito', async function () {

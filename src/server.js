@@ -1,27 +1,21 @@
 const express = require('express')
+
 const hbs  = require('express-handlebars');
 const routerIndex = require('./routers/index.router')
-//SERVER
-const { connectDB, port} = require('./config/configServer')
+const { connectDB } = require('./config/configServer')
 //CONFIG
 const logger = require('morgan')
 const cookieParser = require('cookie-parser')
 const cors = require("cors")
-//PASSPORT
 const passport = require("passport")
 const { initPassport } = require('./config/passport.config')
-//Passport JWT
 const { 
     initPassportJWT, 
     initPassportGitHub } = require('./jwt/passport-jwt')
-//VIEWS
-//DONENV
-    
+
 require("dotenv").config()
 const {envConfig} = require("./config/config")
-    
-    //middleware error
-const { errorHandler } = require('./middlewares/error.middleware')
+
 const path = require('path')
 const { loggerMiddleware } = require('./middlewares/logger.middleware')
 
@@ -35,7 +29,6 @@ const app = express()
 const serverHttp = ServerHTTP(app)
 //const io = ServerIO(serverHttp)
 const PORT = envConfig.PORT || 8080
-console.log("PUERTOOO",PORT)
 
 connectDB()
 //CONFIG:

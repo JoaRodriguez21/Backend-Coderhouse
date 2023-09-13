@@ -1,14 +1,8 @@
 
-const { login, loginGitHub, failLogin, register, failRegister, resetpass, resetpassToken,resetPassForm, logout, current } = require("../controllers/session.controller")
-//Router
 const { Router } = require('express')
-//passport
+const { login, loginGitHub, failLogin, register, failRegister, resetpass, resetpassToken,resetPassForm, logout, current } = require("../controllers/session.controller")
 const passport = require('passport')
-//passport JWT
 const {  passportAuth } = require("../jwt/passport-jwt")
-const { CustomError } = require("../utils/CustomError/CustomError")
-const { generateUserErrorInfo } = require("../utils/CustomError/info")
-const { EError } = require("../utils/CustomError/EErrors")
 const resetPassStrategy = require("../middlewares/resetPassStategy")
 
 const routerSession = Router()
