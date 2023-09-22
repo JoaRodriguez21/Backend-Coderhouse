@@ -59,9 +59,7 @@ _Estas son las herramientas y tecnologías que se utilizarón para el proyecto_
 * [Swagger](https://swagger.io/) - Simplifica el desarrollo de la API para usuarios, equipos y empresas con el equipo de fuentes abiertas y herramientas profesionales de Swagger.
 * [Stripe](https://stripe.com/es-us) - Un paquete completamente integrado de productos financieros y de pagos
 ### Lenguajes
-- HTML
-- CSS
-- Javascript
+- Javascript y Typescript
 
 
 ## Versionado 📌
