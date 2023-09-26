@@ -35,8 +35,4 @@ passport.authenticate('jwt', { session: false }), (req, res) =>{
     })
 })
 
-/* routerViews.get("/reset-password:token", (req, res) => {
-    res.render("resetPassword")
-}) */
-
 module.exports = routerViews
