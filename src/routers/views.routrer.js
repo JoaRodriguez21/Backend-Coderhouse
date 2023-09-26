@@ -4,7 +4,7 @@ const passport = require("passport")
 
 const routerViews = Router()
 
-routerViews.get("/", (req, res) =>{
+routerViews.get("/login", (req, res) =>{
     res.render("loginView", {})
 })
 routerViews.get("/register", (req, res) =>{

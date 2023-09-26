@@ -190,7 +190,7 @@ class SessionController {
         }
         await userService.lastConnection(userId, new Date())
         res.clearCookie('coderCookieToken')
-        res.status(200).redirect("/")
+        res.status(200).redirect("/login")
     }
 
     current = (req, res) => {
