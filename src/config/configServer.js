@@ -9,9 +9,8 @@ module.exports = {
     connectDB: async () => {
         try {
             connect(url)
-
         } catch (err) {
-            console.log(err)
+            return new Error(err)
         }
     },
 }

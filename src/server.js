@@ -1,9 +1,7 @@
 const express = require('express')
-
 const hbs  = require('express-handlebars');
 const routerIndex = require('./routers/index.router')
 const { connectDB } = require('./config/configServer')
-//CONFIG
 const logger = require('morgan')
 const cookieParser = require('cookie-parser')
 const cors = require("cors")
@@ -12,26 +10,20 @@ const { initPassport } = require('./config/passport.config')
 const { 
     initPassportJWT, 
     initPassportGitHub } = require('./jwt/passport-jwt')
-
 require("dotenv").config()
 const {envConfig} = require("./config/config")
-
 const path = require('path')
 const { loggerMiddleware } = require('./middlewares/logger.middleware')
-
 const  {Server: ServerHTTP} = require("http")
-
-//swagger
 const swaggerUiExpress = require("swagger-ui-express")
-const swaggerjsDoc = require("swagger-jsdoc")
-
+const swaggerjsDoc = require("swagger-jsdoc");
+const { devLogger } = require('./config/devLogger');
 const app = express()
 const serverHttp = ServerHTTP(app)
-//const io = ServerIO(serverHttp)
 const PORT = envConfig.PORT || 8080
 
 connectDB()
-//CONFIG:
+
 app.use
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
@@ -40,7 +32,7 @@ app.use(cookieParser(''))
 app.use(logger("dev"))
 app.use(cors())
 
-//Passport init
+
 initPassport()
 initPassportJWT()
 initPassportGitHub()
@@ -78,11 +70,10 @@ app.engine('hbs',
         }
     }),
 );
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-
-//swagger
 const swaggerOptions = {
     definition: {
         openapi: "3.0.1",
@@ -96,17 +87,14 @@ const swaggerOptions = {
 const specs = swaggerjsDoc(swaggerOptions)
 app.use("/docs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
-// Logger
 app.use(loggerMiddleware)
 
-//Routes
 app.use("/",routerIndex)
 
-//Error middleware
-//app.use(errorHandler)
+
 
 app.listen(PORT, (err)=> {
-    if (err) console.log('Erro en el servidor', err)
-    console.log(`Escuchando en el puerto: ${PORT}`)
-    console.log(`Server host: ${envConfig.HOST_URL}${PORT}`)
+    if (err) devLogger.error('Erro en el servidor', err)
+    devLogger.info(`Escuchando en el puerto: ${PORT}`, "info")
+    devLogger.info(`Server host: ${envConfig.HOST_URL}${PORT}`)
 })

@@ -12,7 +12,7 @@ class FileManager {
                 this.path, JSON.stringify(data, null, 2)
                 )
             }catch(error) {
-            console.log(error);
+            return new Error(error);
             }
     }
     readFile = async (archivo) => {
@@ -20,7 +20,7 @@ class FileManager {
             const data = await fs.promises.readFile(this.archivo);
             return JSON.parse(data);
         } catch (error) {
-            console.log(`Error al leer el archivo ${error.message}`);
+            return new Error(error);
         }
     }
 }

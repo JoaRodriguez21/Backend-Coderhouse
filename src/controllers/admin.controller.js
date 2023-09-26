@@ -1,3 +1,4 @@
+const { TicketModel } = require("../dao/mongo/models/ticket.model");
 const { UserModel } = require("../dao/mongo/models/user.model");
 const { userService } = require("../services");
 
@@ -23,6 +24,44 @@ class AdminController {
                 status: "success",
                 email: username,
                 users: docs,
+                hasPrevPage,
+                hasNextPage,
+                prevPage,
+                nextPage
+            })
+        } catch (error) {
+            req.logger.error("Error al acceder al endpoint", error)
+        }
+    }
+    adminTickets = async (req, res) => {
+        try {
+            const {page = 1} = req.query
+            const tickets = await TicketModel.paginate(
+                {},
+                {limit: 3, page: page, lean: true}
+            );
+            const { docs, hasPrevPage, hasNextPage, prevPage, nextPage } = tickets
+            if(!tickets){
+                req.logger.error("No se encontraron tickets")
+                res.status(400).send({
+                    status: "Error",
+                    message: "Error no se encontraron tickets"
+                })
+                return
+            }
+            const {username} = req.user
+            if(!req.user){
+                req.logger.error("No se encontró el usuario")
+                res.status(400).send({
+                    status: "error",
+                    message: "Error al encontrar el usuario"
+                })
+                return
+            }
+            res.status(200).render("adminTickets", {
+                status: "success",
+                email: username,
+                tickets: docs,
                 hasPrevPage,
                 hasNextPage,
                 prevPage,
@@ -88,7 +127,7 @@ class AdminController {
         } catch (error) {
           req.logger.error("error al eliminar el usuario", error)
         }
-      };
+    }
 }
 
 module.exports = new AdminController()

@@ -1,6 +1,9 @@
-const {Schema, model} = require("mongoose")
+const {model, mongoose} = require('mongoose')
+const mongoosePaginate = require("mongoose-paginate-v2")
 
-const TicketCollection = "Tickets"
+const Schema = mongoose.Schema
+
+const collection = "tickets"
 
 const ticketSchema = new Schema({
   code: { 
@@ -26,8 +29,8 @@ const ticketSchema = new Schema({
     required: true 
   },
 });
-
-const TicketModel = model(TicketCollection, ticketSchema)
+ticketSchema.plugin(mongoosePaginate)
+const TicketModel = model(collection, ticketSchema)
 
 module.exports = {
     TicketModel

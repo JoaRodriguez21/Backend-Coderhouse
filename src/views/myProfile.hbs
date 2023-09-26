@@ -38,13 +38,16 @@
             <div class="d-flex flex-column justify-content-center">
                 <h3 class="m-3">Rol: {{ role }}</h3>
                 {{#if updateUser}}
-                    <button class="button-64"><a href="/api/users/premium/{{ id }}">Cambiar a premium</a></button>
-                {{/if}}
-                {{#if isAdmin}}
-                    <button class="btn btn-warning"><a href="/api/users/admin">administrar usuarios</a></button>
+                    <button class="btn btn-dark"><a href="/api/users/premium/{{ id }}">Cambiar a premium</a></button>
                 {{/if}}
             </div>
         </div>
+            {{#if isAdmin}}
+                <div class="cont_btnAdmin">
+                    <button class="btn btn-dark m-3"><a href="/api/users/admin">administrar usuarios</a></button>
+                    <button class="btn btn-dark m-3"><a href="/api/users/admin/tickets">administrar tickets</a></button>
+                </div>
+            {{/if}}
         <div  class="d-flex flex-direction-columns justify-content-center mb-3">
             <p>Ingrese Identificación, Comprobante de domicilio, Comprobante de estado de cuenta:</p>
         </div>

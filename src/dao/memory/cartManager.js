@@ -17,7 +17,7 @@ class CartManager {
                 this.cartCount = data.index
             }
         } catch (error) {
-            console.log(error)
+            return new Error(error)
         }
         return this.carts
     }
@@ -27,7 +27,7 @@ class CartManager {
         try {
             await fs.promises.writeFile(this.path, JSON.stringify(data),'utf-8')
         } catch (error) {
-            console.log(error)
+            return new Error(error)
         }
     }
 

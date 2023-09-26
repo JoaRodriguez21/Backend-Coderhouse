@@ -3,6 +3,10 @@ const uuid4 = require("uuid4")
 const { addToCart } = require("../utils/CustomError/info")
 const { EError } = require("../utils/CustomError/EErrors")
 const { sendEmailTicket, sendEmailOwner } = require("../utils/sendmail")
+const {Stripe} = require("stripe")
+const { envConfig } = require("../config/config")
+
+const stripe = new Stripe(envConfig.STRIPE_SECRET_KEY)
 
 class CartController {
     userCart = async (req, res) => {
@@ -337,12 +341,36 @@ class CartController {
                     res.status(200).send({
                         success: "Success",
                         message: "Compra realizada con exito",
-                    });
+                });
             }
         } catch (error) {
             req.logger.error('Error al finalizar la compra', error);
             res.status(500).send({
                 error: 'Error al finalizar el proceso de compra' });
+        }
+    }
+
+    stripePurchase = async(req, res) => {
+        try {
+            
+            const sessionStripe = await stripe.checkout.sessions.create({
+                line_items: [
+                    {
+                        price_data: {
+                            product_data: {
+                                name: "",
+                                description: ""
+                            },
+                            currency: "usd",
+                            unit_amount: 20000
+                        },
+                        quantity: ""
+                    }
+                ]
+            })
+
+        } catch (error) {
+            req.logger.error("problema al realizar el pago")
         }
     }
 }

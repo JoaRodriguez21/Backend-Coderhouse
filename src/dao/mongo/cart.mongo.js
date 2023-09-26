@@ -49,9 +49,7 @@ class CartDaoMongo {
                 cart.products.push({product: pid, quantity})
 
             } else {
-
                 cart.products[productIndex].quantity += quantity
-
             }
 
             await cart.save()
@@ -64,7 +62,6 @@ class CartDaoMongo {
 
     async update(cid, pid, quantity) {
         try {
-            
             const respUpdate = await CartModel.findOneAndUpdate(
             {_id: cid, "products.product": pid},
             {$inc: {"products.$.quantity": quantity}},
@@ -72,34 +69,27 @@ class CartDaoMongo {
             )
 
             if (respUpdate){
-                res.send("Producto añadido")
+                return respUpdate
             } else {
                 await CartModel.findByIdAndUpdate(
                     {_id: cid},
                     {$push: {products: {product: pid, quantity}}},
                     {new: true, upsert: true}
                 )
-                req.logger.info("")
             }
         } catch (error) {
-            
+            return new Error(error)
         }
     }
 
     async updateProductsCart(cid, productsNoStock){
         try {
             let cart = await CartModel.findById({_id: cid})
-            console.log(cart)
-            console.log("PNS DESDE MONGO: ",productsNoStock)
-            if (!cart){
-                console.log("Problema al encontrar el carrito")
-            }
             cart.products = productsNoStock;
             await cart.save();
-            console.log("carrito actualizado correctamente")
             return cart
         } catch (error) {
-            console.log(error)
+            return new Error(error)
         }
     }
 
@@ -111,9 +101,9 @@ class CartDaoMongo {
                 {new: true}
                 );
             await cart.save()
-            return {status: "succes", cart}
+            return cart
         } catch (error) {
-            return {status: error, message: "No se elimino el producto del carrito"}
+            return new Error(error)
         }
     }
 
@@ -125,9 +115,9 @@ class CartDaoMongo {
                 {new: true}
                 );
             await cart.save()
-            return {status: "succes", cart}
+            return cart
         } catch (error) {
-            return {status: error, message: "Se a eliminado el carrito"}
+            return new Error(error)
         }
     }
 

@@ -29,7 +29,6 @@ describe("Testing de products", ()=>{
         const {statusCode, _body, ok} = await requester.get("/api/product").set("Cookie", [`${cookie.name}=${cookie.value}`])
         expect(statusCode).to.be.equal(200);
         expect(ok).to.be.equal(true)
-        console.log(_body)
         expect(_body).to.have.property('payload').that.is.an('array');
     });
     it('El endpoint GET /api/product/:pid debe devolver un producto por su id', async function () {
@@ -37,7 +36,6 @@ describe("Testing de products", ()=>{
         const {statusCode, _body, ok} = await requester.get(`/api/product/${prodID}`).set("Cookie", [`${cookie.name}=${cookie.value}`])
         expect(statusCode).to.be.equal(200);
         expect(ok).to.be.equal(true)
-        console.log(_body)
         expect(_body).to.be.an('object');
     });
     it('El endpoint POST /api/product/ debe crear un producto', async () => {
@@ -54,7 +52,6 @@ describe("Testing de products", ()=>{
 
         expect(statusCode).to.be.equal(200);;
         expect(ok).to.be.equal(true);
-        console.log(_body)
         expect(_body).to.be.an('object');
     })
     it('El endpoint PUT /api/product/:pid debe actualizar un producto', async function () {
@@ -71,7 +68,6 @@ describe("Testing de products", ()=>{
         const {statusCode, _body, ok} = await requester.put(`/api/product/${pid}`).send(updateProd).set("Cookie", [`${cookie.name}=${cookie.value}`])
         expect(statusCode).to.be.equal(200);
         expect(ok).to.be.equal(true)
-        console.log(_body)
         expect(_body).to.be.an('object');;
       });
 });

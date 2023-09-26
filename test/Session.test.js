@@ -16,7 +16,7 @@ describe("Testing de session", ()=>{
             age: 22,
             password: '12345678'
         };
-    
+
         const response = await requester.post('/api/session/register').send(userMock);
         expect(response.body).to.be.ok;
     });
@@ -48,13 +48,12 @@ describe("Testing de session", ()=>{
         expect(response.text).to.include('user logout');
 
         const currentResponse = await requester.get('/api/session/current')
-        
+
         expect(currentResponse.status).to.equal(401); 
         expect(currentResponse.headers['set-cookie']).to.be.undefined;
     }); 
     it("Test enviar email para restaurar la contraseña", async () => {
         let email = "joaTest3@gmail.com";
-        
         const response = await requester.post("/api/session/reset-password").send({ email });
         expect(response.body.status).to.equal('success');
         expect(response.body.message).to.equal(`Se envio el correo de recuperacion a: ${email}`);

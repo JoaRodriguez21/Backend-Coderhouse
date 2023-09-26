@@ -14,20 +14,17 @@ class ProductDaoMemory {
                 this.path, JSON.stringify(data, null, 2)
                 )
             }catch(err) {
-            console.log(err);
+            return new Error(err);
             }
         }
         async readFile() {
             try {
                 const data = await fs.promises.readFile(this.path, 'utf-8')
-                
                 return JSON.parse(data)            
             } catch (error) {
                 return []
             }
-            
         }
-    
         get = async() =>{
             try {
                 return await this.readFile()
@@ -35,15 +32,12 @@ class ProductDaoMemory {
                 return 'No se hay productos'
             }
         }
-    
-    
     create = async (product) => {
         try {
             console.log("producto agregado:", product);
             let products = await this.getProducts()
             let newId
             let newCode = products.find(prod => prod.code === product.code)
-
             if (newCode) return console.log(`Ya hay un producto con el codigo ${newCode}`)
             products.length === 0 ? newId = 1 : newId = products[products.length - 1 ].id + 1
             if(Object.values(product).every(value => value)){
@@ -55,7 +49,7 @@ class ProductDaoMemory {
             }
             return console.log('Todos los campos son requeridos')
         } catch (error) {
-            console.log(error);
+            return new Error(error);
         }
     }
     update = async (id, data) => {
@@ -64,7 +58,7 @@ class ProductDaoMemory {
             Object.assign(productos[id-1], data)
             await this.writeFile(productos)
         } catch (error) {
-            console.log(error);
+            return new Error(error);
         }
     }
     getById = async (id) => {
@@ -73,7 +67,7 @@ class ProductDaoMemory {
             const product = products.find(prod => prod.id === id)
             return product ? product : console.log('No se encuentra el producto')
         } catch (error) {
-            console.log(error);
+            return new Error(error);
         }
     }
     delete = async (id) => {
@@ -83,7 +77,7 @@ class ProductDaoMemory {
             await this.writeFile(obj);
             return console.log('Producto eliminado');
         } catch (error) {
-            console.log(error);
+        return new Errorconsole.log(error);
         }
     }
 }

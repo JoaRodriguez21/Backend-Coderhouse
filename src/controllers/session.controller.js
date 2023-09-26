@@ -190,14 +190,12 @@ class SessionController {
         }
         await userService.lastConnection(userId, new Date())
         res.clearCookie('coderCookieToken')
-        res.status(200).redirect("/login")
+        res.status(200).redirect("/")
     }
 
     current = (req, res) => {
         const user = req.user
-        console.log(user)
         let userCurrent = new UserDto(user)
-        //console.log(userCurrent)
         res.send({status: "success", payload: userCurrent})
     }
 }
